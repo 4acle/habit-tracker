@@ -1,13 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function App() {
   const [name, setName] = useState("");
-  const [habits, setHabits] = useState([]);
+  const [habits, setHabits] = useState(() => {
+    const stored = localStorage.getItem("habits");
+    return stored ? JSON.parse(stored) : [];
+  });
+
+  // Save habits whenever they change
+  useEffect(() => {
+    localStorage.setItem("habits", JSON.stringify(habits));
+  }, [habits]);
 
   function addHabit() {
     const trimmed = name.trim();
     if (!trimmed) return;
-  
+
     const newHabit = { id: crypto.randomUUID(), name: trimmed };
     setHabits((prev) => [...prev, newHabit]);
     setName("");
